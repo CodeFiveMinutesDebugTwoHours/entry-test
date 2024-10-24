@@ -1,46 +1,32 @@
 version: '3'
 
-name: mission-dev
+name: test-dev
 services:
   mission-dev:
     image: ${APP_ENTRY_ENV_DOCKER_IMAGE}:1.0.0-dev-dev.934a83a.b157
-    container_name: mission-dev
+    container_name: test-dev
     environment:
       - QUARKUS_DATASOURCE_USERNAME=${APP_ENTRY_ENV_QUARKUS_DATASOURCE_USERNAME}
       - QUARKUS_DATASOURCE_PASSWORD=${APP_ENTRY_ENV_QUARKUS_DATASOURCE_PASSWORD}
       - QUARKUS_DATASOURCE_JDBC_URL=${APP_ENTRY_ENV_QUARKUS_DATASOURCE_JDBC_URL}
-      - QUARKUS_REDIS_HOSTS=redis://@redis-sz.dev.qhx.io:6379/0
-      - QUARKUS_REDIS_PASSWORD=86259262
       - QUARKUS_HIBERNATE_ORM_LOG_SQL=false
       - QUARKUS_HIBERNATE_ORM_LOG_BIND_PARAMETERS=false
       - QUARKUS_LOG_CONSOLE_JSON=false
       - QUARKUS_HTTP_PORT=10000
       - DAPR_GRPC_PORT=3501
       - QUARKUS_SCHEDULER_ENABLED=true
-      #otel服务名称
-      - QUARKUS_OTEL_SERVICE_NAME=mission-dev
-      #otel地址
-      - QUARKUS_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://oap:11800
-      # Skywalking服务名称  
-      - SW_AGENT_NAME=mission
-      #实例名称 默认uuid@hostname      
-      #- SW_AGENT_INSTANCE_NAME=mission-1
-      #命名空间      
-      - SW_AGENT_NAMESPACE=dev
-      # oap连接地址      
-      - SW_AGENT_COLLECTOR_BACKEND_SERVICES=oap:11800
-      # agent日志目录      
-      - SW_LOGGING_DIR=/tmp
+      - PARAM=1
+
     logging:
       options:
         max-size: 100m
         max-file: "2"
           # agent目录挂载      
-    volumes:
-      - "/opt/data-dev/skywalking-agent/mission:/work/skywalking-agent"  
-  mission-dev-dapr:
+    #volumes:
+      #- "/opt/data-dev/skywalking-agent/mission:/work/skywalking-agent"
+  test-dev-dapr:
     image: "daprio/daprd:1.11.2"
-    container_name: mission-dev-dapr
+    container_name: test-dev-dapr
     command:
       [
         "./daprd",
@@ -62,16 +48,16 @@ services:
         "--config",
         "/components/config.yaml"
       ]
-    volumes:
-      - "/opt/data-dev/dapr/mission:/components"
+    #volumes:
+      #- "/opt/data-dev/dapr/mission:/components"
     depends_on:
-      - mission-dev
-    network_mode: "service:mission-dev"
+      - test-dev
+    network_mode: "service:test-dev"
     logging:
       options:
         max-size: 100m
         max-file: "2"
 networks:
   default:
-    name: ${APP_ENTRY_ENV_DOCKER_NETWORK}
+    name: zxf
     external: true
